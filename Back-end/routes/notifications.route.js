@@ -1,4 +1,4 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 const connection = require('../config');
 
@@ -21,82 +21,40 @@ router.get('/', (req, res) => {
 
 //ADD NEW NOTIFICATIONS http://localhost:5000/notifications
 
-router.post('/', (req, res) => {
-  const formData = req.body;
-  const sendTo = formData.send_to;
 
-  if (
-    sendTo === 'All' &&
-    sendTo === 'All Attendees' &&
-    sendTo === 'All Speakers' &&
-    sendTo === 'Workshop'
-  ) {
-    return connection.query(
-      'INSERT INTO notification SET ?',
-      [formData],
-      (err, results) => {
-        if (err) {
-          return res.status(500).json({
-            error: err.message,
-            sql: err.sql,
-          });
-        }
-        return connection.query(
-          'SELECT * FROM notification WHERE id = ?',
-          results.insertId,
-          (err2, records) => {
-            if (err2) {
-              return res.status(500).json({
-                error: err2.message,
-                sql: err2.sql,
-              });
-            }
-            console.log('FORM DATA', formData);
-            sendNodemailer(formData);
-            const InsertedNotification = records[0];
-            return res.status(201).json(InsertedNotification);
-          }
-        );
-      }
-    );
-  } else {
-    return connection.query(
-      'INSERT INTO notification SET ?',
-      [formData],
-      (err, results) => {
-        if (err) {
-          return res.status(500).json({
-            error: err.message,
-            sql: err.sql,
-          });
-        }
-        return connection.query(
-          `SELECT * FROM user WHERE '${sendTo}' LIKE CONCAT(CONCAT('%',firstname),'%') OR '${sendTo}' LIKE CONCAT(CONCAT('%',lastname),'%')`,
-          (err2, records) => {
-            if (err2) {
-              return res.status(500).json({
-                error: err2.message,
-                sql: err2.sql,
-              });
-            }
-            const queryEmail = records[0].email;
-            console.log('FORM DATA', formData);
-            console.log('RECORDS', queryEmail);
-            sendNodemailer(formData, queryEmail);
-          }
-        );
-      }
-    );
-  }
+router.post("/", (req, res) => {
+  const formData = req.body;
+
+  let sql =
+    "INSERT INTO notification (subject, content, state, send_to, date) VALUES ";
+  formData.map((notification) => {
+    if (formData.indexOf(notification) !== formData.length - 1) {
+      sql += `("${notification.subject}", "${notification.content}", "${notification.state}", "${notification.send_to}", "${notification.date}"),`;
+    } else {
+      sql += `("${notification.subject}", "${notification.content}", "${notification.state}", "${notification.send_to}", "${notification.date}");`;
+    }
+  });
+  return connection.query(sql, (err2, records) => {
+    if (err2) {
+      console.log(err2);
+      return res.status(500).json({
+        error: err2.message,
+        sql: err2.sql,
+      });
+    } else {
+       sendNodemailer(formData); //need to add email
+      res.status(200).send("The notification are all confirmed");
+    }
+  });
 });
 
 //DELETE ONE NOTIFICATION http://localhost:5000/notifications/:id
 
-router.delete('/:id', (req, res) => {
+router.delete("/:id", (req, res) => {
   const id = req.params.id;
 
   connection.query(
-    'DELETE FROM notification WHERE id = ?',
+    "DELETE FROM notification WHERE id = ?",
     [id],
     (err, results) => {
       if (err) {
@@ -106,7 +64,7 @@ router.delete('/:id', (req, res) => {
         });
       }
       if (results.affectedRows === 0) {
-        return res.status(404).json({ msg: 'user does not exist' });
+        return res.status(404).json({ msg: "user does not exist" });
       }
 
       return res.status(201).json(results);
