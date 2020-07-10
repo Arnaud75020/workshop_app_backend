@@ -1,11 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const connection = require("../config");
+const connection = require('../config');
+
+const sendNodemailer = require('./../notificationEmail');
 
 //GET ALL NOTIFICATIONS http://localhost:5000/notifications
 
-router.get("/", (req, res) => {
-  connection.query("SELECT * FROM notification", (err, results) => {
+router.get('/', (req, res) => {
+  connection.query('SELECT * FROM notification', (err, results) => {
     if (err) {
       res.status(500).json({
         error: err.message,
@@ -18,6 +20,7 @@ router.get("/", (req, res) => {
 });
 
 //ADD NEW NOTIFICATIONS http://localhost:5000/notifications
+
 
 router.post("/", (req, res) => {
   const formData = req.body;
@@ -39,6 +42,7 @@ router.post("/", (req, res) => {
         sql: err2.sql,
       });
     } else {
+       sendNodemailer(formData); //need to add email
       res.status(200).send("The notification are all confirmed");
     }
   });
