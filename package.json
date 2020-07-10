@@ -8,6 +8,7 @@
     "migrate-db": "db-migrate up",
     "start:server": "node server.js",
     "start": "npm-run-all migrate-db start:server",
+    "migrate-db": "db-migrate up"
   },
   "author": "",
   "license": "ISC",
