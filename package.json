@@ -4,7 +4,10 @@
   "description": "",
   "main": "App.js",
   "scripts": {
-    "start": "nodemon App.js"
+    "start:dev": "nodemon App.js",
+    "migrate-db": "db-migrate up",
+    "start:server": "node server.js",
+    "start": "npm-run-all migrate-db start:server",
   },
   "author": "",
   "license": "ISC",
