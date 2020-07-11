@@ -3,7 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-const port = process.env.DB_PORT;
+const port = process.env.PORT || 5000;
 const connection = require('./config.js');
 
 const notificationRouter = require('./routes/notifications.route');
