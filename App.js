@@ -3,6 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+var cors = require('cors')
 const port = process.env.PORT || 5000;
 const connection = require('./config.js');
 
@@ -13,6 +14,7 @@ const authRouter = require('./routes/auth.route');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cors());
 
 connection.connect((err) => {
   if (err) {
