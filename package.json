@@ -4,11 +4,7 @@
   "description": "",
   "main": "App.js",
   "scripts": {
-    "start:dev": "nodemon App.js",
-    "migrate-db": "db-migrate up",
-    "start:server": "node server.js",
-    "start": "npm-run-all migrate-db start:server",
-    "migrate-db": "db-migrate up"
+    "start": "nodemon App.js",
   },
   "author": "",
   "license": "ISC",
