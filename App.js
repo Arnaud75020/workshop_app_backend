@@ -12,6 +12,21 @@ const userRouter = require('./routes/users.route');
 const workshopRouter = require('./routes/workshop.route');
 const authRouter = require('./routes/auth.route');
 
+
+process.on('unhandledRejection', error => {
+  console.error('unhandledRejection', JSON.stringify(error), error.stack);
+  process.exit(1);
+});
+process.on('uncaughtException', error => {
+  console.log('uncaughtException', JSON.stringify(error), error.stack);
+  process.exit(1);
+});
+process.on('beforeExit', () => {
+  app.close((err) => {
+    if (err) console.error(JSON.stringify(err), err.stack);
+  });
+});
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
