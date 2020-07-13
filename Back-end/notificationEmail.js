@@ -9,10 +9,11 @@ const smtpTransporter = nodemailer.createTransport({
   },
 });
 
-const sendNodemailer = (formData, queryEmail) => {
+const sendNodemailer = (formData) => {
+  console.log("formData formData formData", formData)
   const mailOptions = {
     from: 'Productized <hackathon2medicationreminder@gmail.com>', // change to 'Productized <productized email>'
-    to: `${queryEmail ? queryEmail : 'andremdpereira@gmail.com'}`, // change to email(s) from email list
+    to: `${formData.emailsList ? formData.emailsList : 'andremdpereira@gmail.com'}`, // change to email(s) from email list
     subject: `${formData.subject}`,
     text: `${formData.content}`,
   };

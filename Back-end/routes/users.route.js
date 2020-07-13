@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const connection = require('../config');
+const bcrypt = require('bcrypt');
+
 
 
 //GET ALL USERS http://localhost:5000/users
@@ -100,6 +102,33 @@ router.delete('/:id', (req, res) => {
       .status(201)
       .json(results)
   })
+});
+
+
+
+router.put("/change-password", (req, res) => {
+  const formData = req.body;
+
+  const { email, newPassword}  = formData
+  console.log(formData)
+
+  bcrypt.hash(newPassword, 10, (err, hash) => {
+
+   return connection.query(
+     "UPDATE user SET password = ? WHERE email = ?",
+     [hash, email],
+     (err, results) => {
+       if (err) {
+         console.log("ERR", err)
+         return res.status(500).json({
+           error: err.message,
+           sql: err.sql,
+         });
+       }
+       res.status(200).send(results);
+       console.log("RESULTS", results)
+     }
+   )});
 });
 
 module.exports = router;

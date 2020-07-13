@@ -25,6 +25,8 @@ router.get('/', (req, res) => {
 router.post("/", (req, res) => {
   const formData = req.body;
 
+  console.log(formData)
+
   let sql =
     "INSERT INTO notification (subject, content, state, send_to, date) VALUES ";
   formData.map((notification) => {
@@ -42,7 +44,9 @@ router.post("/", (req, res) => {
         sql: err2.sql,
       });
     } else {
-       sendNodemailer(formData); //need to add email
+      formData.map(notification =>{
+        sendNodemailer(notification); 
+      })
       res.status(200).send("The notification are all confirmed");
     }
   });

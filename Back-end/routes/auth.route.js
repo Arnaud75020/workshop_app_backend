@@ -104,4 +104,15 @@ router.post('/login', function (req, res) {
   })(req, res);
 });
 
+// CHANGE PASSWORD ROUTE http://localhost:5000/auth/change-password
+
+router.post('/change-password', function (req, res) {
+  passport.authenticate('local', (err, user, info) => {
+    if (err) return res.status(500).send(err);
+    if (!user) return res.status(400).json({ message: info.message });
+    return res.json({ message: "password correct" });
+  })(req, res);
+});
+
+
 module.exports = router;
