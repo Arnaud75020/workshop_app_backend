@@ -99,14 +99,14 @@ router.put("/:id", (req, res) => {
     [formData, idWorkshop],
     (err, results) => {
       if (err) {
-        console.log("ERR", err)
+        console.log("ERR", err);
         return res.status(500).json({
           error: err.message,
           sql: err.sql,
         });
       }
       res.status(200).send(results);
-      console.log("RESULTS", results)
+      console.log("RESULTS", results);
     }
   );
 });
@@ -157,7 +157,7 @@ router.get("/:id/attendees", (req, res) => {
   const speakerId = req.params.id;
 
   connection.query(
-    "SELECT u.firstname, u.lastname, u.email, u.position, u.company, u.country FROM user u JOIN user_workshops u_w ON u_w.user_id = u.id JOIN workshops w ON u_w.workshop_id = w.id WHERE w.speaker_id = ?",
+    "SELECT u.firstname, u.lastname, u.email, u.position, u.company, u.country, u.registration_date FROM user u JOIN user_workshops u_w ON u_w.user_id = u.id JOIN workshops w ON u_w.workshop_id = w.id WHERE w.speaker_id = ?",
     [speakerId],
     (err, results) => {
       if (err) {
@@ -331,27 +331,26 @@ router.delete("/all-speaker-workshops/:id", (req, res) => {
 router.put("/workshop-user-workshops/:id", (req, res) => {
   const formData = req.body;
 
-  const {speaker_id} = formData
+  const { speaker_id } = formData;
   const workshopId = req.params.id;
 
-  console.log("formData", formData, "workshopId", workshopId)
+  console.log("formData", formData, "workshopId", workshopId);
 
   return connection.query(
     "UPDATE user_workshops SET speaker_id = ?, workshop_id = ? WHERE workshop_id = ?",
     [speaker_id, workshopId, workshopId],
     (err, results) => {
       if (err) {
-        console.log("ERR", err)
+        console.log("ERR", err);
         return res.status(500).json({
           error: err.message,
           sql: err.sql,
         });
       }
       res.status(200).send(results);
-      console.log("RESULTS", results)
+      console.log("RESULTS", results);
     }
   );
 });
-
 
 module.exports = router;
