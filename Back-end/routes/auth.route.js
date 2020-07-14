@@ -13,6 +13,8 @@ const LocalStrategy = require('passport-local').Strategy;
 
 const sendNodemailer = require('./../regEmail.js');
 
+const verifyToken = require('../utils/verifyToken');
+
 // LOCAL STATEGY AUTHENTICATION
 
 passport.use(
@@ -36,20 +38,6 @@ passport.use(
           return callback(null, foundUser[0]);
         }
       );
-    }
-  )
-);
-
-// JWT STATEGY AUTHORIZATION
-
-passport.use(
-  new JWTStrategy(
-    {
-      jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-      secretOrKey: process.env.JWT_SECRET,
-    },
-    (jwtPayload, cb) => {
-      return cb(null, jwtPayload);
     }
   )
 );
@@ -103,6 +91,12 @@ router.post('/login', function (req, res) {
     if (err) return res.status(500).send(err);
     if (!user) return res.status(400).json({ message: info.message });
     const token = jwt.sign({ user }, process.env.JWT_SECRET);
+    res.cookie('token', token, {
+      expires: new Date(Date.now() + 44600000),
+      secure: false, // set to true if your using https
+      httpOnly: true,
+      sameSite: 'strict',
+    });
     return res.json({ user, token });
   })(req, res);
 });
@@ -115,6 +109,10 @@ router.post('/change-password', function (req, res) {
     if (!user) return res.status(400).json({ message: info.message });
     return res.json({ message: 'password correct' });
   })(req, res);
+});
+
+router.get('/verify-token', verifyToken, (req, res) => {
+  res.status(200).send(req.user);
 });
 
 module.exports = router;
