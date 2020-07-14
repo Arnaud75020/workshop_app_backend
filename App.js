@@ -32,17 +32,30 @@ process.on('SIGINT', function () {
   });
 });
 
+
+function startConnection() {
+  console.error('CONNECTING');
+  connection = mysql.createConnection(config.mysql);
+  connection.connect(function (err) {
+    if (err) {
+      console.error('CONNECT FAILED', err.code);
+      startConnection();
+    }
+    else
+      console.error('CONNECTED');
+  });
+  connection.on('error', function (err) {
+    if (err.fatal)
+      startConnection();
+  });
+}
+
+startConnection();
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 
-// connection.connect((err) => {
-//   if (err) {
-//     console.log(err);
-//   } else {
-//     console.log('You are connected to the database successfully');
-//   }
-// });
 
 app.use('/notifications', notificationRouter);
 app.use('/users', userRouter);
