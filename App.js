@@ -5,7 +5,7 @@ const app = express();
 const bodyParser = require('body-parser');
 var cors = require('cors')
 const port = process.env.PORT || 5000;
-const connection = require('./config.js');
+const connection = require('./config');
 
 const notificationRouter = require('./routes/notifications.route');
 const userRouter = require('./routes/users.route');
@@ -31,26 +31,6 @@ process.on('SIGINT', function () {
     process.exit(err ? 1 : 0);
   });
 });
-
-
-function startConnection() {
-  console.error('CONNECTING');
-  connection = mysql.createConnection(config.mysql);
-  connection.connect(function (err) {
-    if (err) {
-      console.error('CONNECT FAILED', err.code);
-      startConnection();
-    }
-    else
-      console.error('CONNECTED');
-  });
-  connection.on('error', function (err) {
-    if (err.fatal)
-      startConnection();
-  });
-}
-
-startConnection();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
