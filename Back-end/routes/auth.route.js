@@ -101,6 +101,17 @@ router.post('/login', function (req, res) {
   })(req, res);
 });
 
+router.post(
+  '/logout',
+  (req, res, next) => {
+    res.clearCookie('token');
+    next();
+  },
+  (req, res) => {
+    res.end('finish');
+  }
+);
+
 // CHANGE PASSWORD ROUTE http://localhost:5000/auth/change-password
 
 router.post('/change-password', function (req, res) {
@@ -112,6 +123,7 @@ router.post('/change-password', function (req, res) {
 });
 
 router.get('/verify-token', verifyToken, (req, res) => {
+  console.log('REQ USER', req.user);
   res.status(200).send(req.user);
 });
 

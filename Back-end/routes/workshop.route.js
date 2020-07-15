@@ -1,11 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const connection = require('../config');
-const verifyToken = require('../utils/verifyToken');
 
 //GET ALL WORKSHOPS http://localhost:5000/workshops
 
-router.get('/', verifyToken, (req, res) => {
+router.get('/', (req, res) => {
   connection.query(
     'SELECT w.*, MONTHNAME(w.date) AS workshop_month, CONCAT(u.firstname, " ", u.lastname) AS workshop_speaker, COUNT(u_w.workshop_id) as enrolled_attendees FROM workshops w JOIN user u ON w.speaker_id = u.id left join user_workshops u_w on w.id=u_w.workshop_id group by w.id;',
     (err, results) => {
@@ -23,7 +22,7 @@ router.get('/', verifyToken, (req, res) => {
 
 //GET WORKSHOP MONTHS http://localhost:5000/workshops/months
 
-router.get('/months', verifyToken, (req, res) => {
+router.get('/months', (req, res) => {
   connection.query(
     'SELECT DISTINCT MONTHNAME(date) AS month FROM workshops ORDER BY month DESC',
     (err, results) => {

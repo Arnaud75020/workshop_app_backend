@@ -5,6 +5,7 @@ const app = express();
 const bodyParser = require('body-parser');
 const port = process.env.PORT;
 const connection = require('./config.js');
+const morgan = require('morgan');
 
 const cookieParser = require('cookie-parser');
 
@@ -14,6 +15,7 @@ const workshopRouter = require('./routes/workshop.route');
 const authRouter = require('./routes/auth.route');
 
 app.use(cookieParser());
+app.use(morgan('dev'));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
