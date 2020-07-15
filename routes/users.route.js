@@ -132,4 +132,26 @@ router.put("/change-password", (req, res) => {
   });
 });
 
+router.put('/:id', (req, res) => {
+  const formData = req.body;
+  const idUpdatedUser = req.params.id;
+  console.log(formData, idUpdatedUser)
+
+  return connection.query(
+    "UPDATE user SET ? WHERE id = ?",
+    [formData, idUpdatedUser],
+    (err, results) => {
+      if (err) {
+        console.log("ERR", err);
+        return res.status(500).json({
+          error: err.message,
+          sql: err.sql,
+        });
+      }
+      res.status(200).send(results);
+      console.log("RESULTS", results);
+    }
+  );
+});
+
 module.exports = router;
