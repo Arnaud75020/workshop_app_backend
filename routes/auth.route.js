@@ -74,7 +74,7 @@ router.post('/signup', (req, res) => {
       formData,
       (err, results) => {
         if (err) {
-          res.status(500).json({ flash: 'ERROR ERROR' });
+          res.status(500).json({ flash: 'ERROR ERROR', err: err });
         } else {
           res.status(200).json({ flash: 'User has been registered' });
           sendNodemailer();
