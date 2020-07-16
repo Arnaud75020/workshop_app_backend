@@ -96,6 +96,7 @@ router.post('/login', function (req, res) {
       secure: true, // set to true if your using https
       httpOnly: true,
       sameSite: 'strict',
+      withCredentials: true,
     });
     return res.json({ user, token });
   })(req, res);
