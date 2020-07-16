@@ -1,3 +1,4 @@
+require('dotenv');
 const express = require('express');
 const router = express.Router();
 const connection = require('../config');
@@ -11,6 +12,8 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 
 const sendNodemailer = require('./../regEmail.js');
+
+const verifyToken = require('../utils/verifyToken');
 
 // LOCAL STATEGY AUTHENTICATION
 
@@ -39,20 +42,6 @@ passport.use(
   )
 );
 
-// JWT STATEGY AUTHORIZATION
-
-passport.use(
-  new JWTStrategy(
-    {
-      jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-      secretOrKey: 'jwtsecret',
-    },
-    (jwtPayload, cb) => {
-      return cb(null, jwtPayload);
-    }
-  )
-);
-
 // SIGN UP ROUTE http://localhost:5000/auth/signup
 
 router.post('/signup', (req, res) => {
@@ -66,6 +55,7 @@ router.post('/signup', (req, res) => {
       lastname,
       role_id,
       max_workshops,
+      registration_date,
     } = req.body;
     const formData = [
       firstname,
@@ -76,14 +66,15 @@ router.post('/signup', (req, res) => {
       hash,
       role_id,
       max_workshops,
+      registration_date,
     ];
 
     connection.query(
-      'INSERT INTO user (firstname, lastname, company, country, email, password, role_id, max_workshops) VALUES (?,?,?,?,?,?,?,?)',
+      'INSERT INTO user (firstname, lastname, company, country, email, password, role_id, max_workshops, registration_date) VALUES (?,?,?,?,?,?,?,?,?)',
       formData,
       (err, results) => {
         if (err) {
-          res.status(500).json({ flash: 'ERROR ERROR' });
+          res.status(500).json({ flash: 'ERROR ERROR', err: err });
         } else {
           res.status(200).json({ flash: 'User has been registered' });
           sendNodemailer();
@@ -99,9 +90,41 @@ router.post('/login', function (req, res) {
   passport.authenticate('local', (err, user, info) => {
     if (err) return res.status(500).send(err);
     if (!user) return res.status(400).json({ message: info.message });
-    const token = jwt.sign(JSON.stringify(user), 'jwtsecret');
+    const token = jwt.sign({ user }, process.env.JWT_SECRET);
+    res.cookie('token', token, {
+      expires: new Date(Date.now() + 44600000),
+      secure: false, // set to true if your using https
+      httpOnly: true,
+      sameSite: 'strict',
+    });
     return res.json({ user, token });
   })(req, res);
+});
+
+router.post(
+  '/logout',
+  (req, res, next) => {
+    res.clearCookie('token');
+    next();
+  },
+  (req, res) => {
+    res.end('finish');
+  }
+);
+
+// CHANGE PASSWORD ROUTE http://localhost:5000/auth/change-password
+
+router.post('/change-password', function (req, res) {
+  passport.authenticate('local', (err, user, info) => {
+    if (err) return res.status(500).send(err);
+    if (!user) return res.status(400).json({ message: info.message });
+    return res.json({ message: 'password correct' });
+  })(req, res);
+});
+
+router.get('/verify-token', verifyToken, (req, res) => {
+  console.log('REQ USER', req.user);
+  res.status(200).send(req.user);
 });
 
 module.exports = router;
