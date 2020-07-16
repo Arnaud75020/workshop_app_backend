@@ -1,6 +1,7 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
 const connection = require('../config');
+const verifyToken = require('../utils/verifyToken');
 
 const sendNodemailer = require('./../notificationEmail');
 
@@ -21,14 +22,13 @@ router.get('/', (req, res) => {
 
 //ADD NEW NOTIFICATIONS http://localhost:5000/notifications
 
-
-router.post("/", (req, res) => {
+router.post('/', (req, res) => {
   const formData = req.body;
 
-  console.log(formData)
+  console.log(formData);
 
   let sql =
-    "INSERT INTO notification (subject, content, state, send_to, date) VALUES ";
+    'INSERT INTO notification (subject, content, state, send_to, date) VALUES ';
   formData.map((notification) => {
     if (formData.indexOf(notification) !== formData.length - 1) {
       sql += `("${notification.subject}", "${notification.content}", "${notification.state}", "${notification.send_to}", "${notification.date}"),`;
@@ -44,21 +44,21 @@ router.post("/", (req, res) => {
         sql: err2.sql,
       });
     } else {
-      formData.map(notification =>{
-        sendNodemailer(notification); 
-      })
-      res.status(200).send("The notification are all confirmed");
+      formData.map((notification) => {
+        sendNodemailer(notification);
+      });
+      res.status(200).send('The notification are all confirmed');
     }
   });
 });
 
 //DELETE ONE NOTIFICATION http://localhost:5000/notifications/:id
 
-router.delete("/:id", (req, res) => {
+router.delete('/:id', (req, res) => {
   const id = req.params.id;
 
   connection.query(
-    "DELETE FROM notification WHERE id = ?",
+    'DELETE FROM notification WHERE id = ?',
     [id],
     (err, results) => {
       if (err) {
@@ -68,7 +68,7 @@ router.delete("/:id", (req, res) => {
         });
       }
       if (results.affectedRows === 0) {
-        return res.status(404).json({ msg: "user does not exist" });
+        return res.status(404).json({ msg: 'user does not exist' });
       }
 
       return res.status(201).json(results);
