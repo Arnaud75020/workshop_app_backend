@@ -94,7 +94,7 @@ router.post('/login', function (req, res) {
     res.cookie('token', token, {
       expires: new Date(Date.now() + 44600000),
       secure: true, // set to true if your using https
-      httpOnly: true,
+      // httpOnly: true,
       sameSite: 'strict',
       withCredentials: true,
     });
