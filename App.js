@@ -1,6 +1,5 @@
 require('dotenv').config();
 
-const morgan = require('morgan');
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
@@ -17,11 +16,11 @@ const userRouter = require('./routes/users.route');
 const workshopRouter = require('./routes/workshop.route');
 const authRouter = require('./routes/auth.route');
 
-process.on('unhandledRejection', error => {
+process.on('unhandledRejection', (error) => {
   console.error('unhandledRejection', JSON.stringify(error), error.stack);
   process.exit(1);
 });
-process.on('uncaughtException', error => {
+process.on('uncaughtException', (error) => {
   console.log('uncaughtException', JSON.stringify(error), error.stack);
   process.exit(1);
 });
