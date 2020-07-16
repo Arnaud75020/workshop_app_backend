@@ -95,7 +95,7 @@ router.post('/login', function (req, res) {
       expires: new Date(Date.now() + 44600000),
       secure: true, // set to true if your using https
       // httpOnly: true,
-      sameSite: 'strict',
+      // sameSite: 'strict',
       withCredentials: true,
     });
     return res.json({ user, token });
