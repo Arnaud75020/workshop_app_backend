@@ -1,5 +1,6 @@
 require('dotenv').config();
 
+const morgan = require('morgan');
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
@@ -35,7 +36,7 @@ process.on('SIGINT', function () {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
-
+app.use(morgan('dev'));
 
 app.use('/notifications', notificationRouter);
 app.use('/users', userRouter);
