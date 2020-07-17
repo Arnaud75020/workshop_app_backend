@@ -38,12 +38,12 @@ process.on('SIGINT', function () {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(
-  cors({
-    credentials: true,
-    origin: process.env.CLIENT_PUBLIC_URL || 'http://localhost:3000',
-  })
-);
+app.use(cors());
+//   cors({
+//     credentials: true,
+//     origin: process.env.CLIENT_PUBLIC_URL || 'http://localhost:3000',
+//   })
+// );
 app.use(morgan('dev'));
 
 app.use('/notifications', notificationRouter);
