@@ -99,6 +99,7 @@ router.post('/login', function (req, res) {
       domain: 'lisbon-js-202003-pjt3-productized-frontend.jsrover.wilders.dev',
       path: '/',
     });
+    console.log('TOKEN', token);
     return res.json({ user, token });
   })(req, res);
 });
