@@ -41,10 +41,7 @@ app.use(cookieParser());
 app.use(
   cors({
     credentials: true,
-    origin:
-      process.env.NODE_ENV === 'production'
-        ? 'https://lisbon-js-202003-pjt3-productized-frontend.jsrover.wilders.dev/'
-        : 'http://localhost:3000',
+    origin: process.env.CLIENT_PUBLIC_URL || 'http://localhost:3000',
   })
 );
 app.use(morgan('dev'));
