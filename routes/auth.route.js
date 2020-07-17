@@ -94,10 +94,10 @@ router.post('/login', function (req, res) {
     res.cookie('token', token, {
       expires: new Date(Date.now() + 44600000),
       secure: true, // set to true if your using https
-      httpOnly: false,
-      sameSite: 'none',
-      domain: 'lisbon-js-202003-pjt3-productized-frontend.jsrover.wilders.dev',
-      path: '/login',
+      // httpOnly: false,
+      // sameSite: 'none',
+      // domain: 'lisbon-js-202003-pjt3-productized-frontend.jsrover.wilders.dev',
+      // path: '/login',
     });
     console.log('TOKEN', token);
     return res.json({ user, token });
