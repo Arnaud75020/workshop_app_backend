@@ -93,8 +93,8 @@ router.post('/login', function (req, res) {
     const token = jwt.sign({ user }, process.env.JWT_SECRET);
     res.cookie('token', token, {
       expires: new Date(Date.now() + 44600000),
-      secure: true, // set to true if your using https
-      // httpOnly: false,
+      // secure: true,
+      httpOnly: true,
       // sameSite: 'none',
       // domain: 'lisbon-js-202003-pjt3-productized-frontend.jsrover.wilders.dev',
       // path: '/login',
