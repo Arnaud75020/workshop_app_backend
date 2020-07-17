@@ -97,7 +97,7 @@ router.post('/login', function (req, res) {
       httpOnly: false,
       sameSite: 'none',
       domain: 'lisbon-js-202003-pjt3-productized-frontend.jsrover.wilders.dev',
-      path: '/',
+      path: '/login',
     });
     console.log('TOKEN', token);
     return res.json({ user, token });
