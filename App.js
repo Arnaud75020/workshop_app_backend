@@ -43,7 +43,7 @@ app.use(
     credentials: true,
     origin:
       process.env.NODE_ENV === 'production'
-        ? process.env.CLIENT_PUBLIC_URL
+        ? 'https://lisbon-js-202003-pjt3-productized-frontend.jsrover.wilders.dev/'
         : 'http://localhost:3000',
   })
 );
