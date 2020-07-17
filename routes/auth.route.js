@@ -95,7 +95,8 @@ router.post('/login', function (req, res) {
       expires: new Date(Date.now() + 44600000),
       secure: true, // set to true if your using https
       httpOnly: false,
-      domain: '.jsrover.wilders.dev',
+      sameSite: 'none',
+      domain: 'lisbon-js-202003-pjt3-productized-frontend.jsrover.wilders.dev',
       path: '/',
     });
     return res.json({ user, token });
