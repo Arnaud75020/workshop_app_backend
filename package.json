@@ -5,7 +5,7 @@
   "main": "App.js",
   "scripts": {
     "start:dev": "nodemon App.js",
-    "start": "pm2 start App.js && pm2 log 0"
+    "start": "node App.js"
   },
   "author": "",
   "license": "ISC",

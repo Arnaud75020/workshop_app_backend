@@ -54,6 +54,8 @@ app.use('/users', userRouter);
 app.use('/workshops', workshopRouter);
 app.use('/auth', authRouter);
 
+console.log('NODE_ENV', process.env.NODE_ENV);
+
 app.listen(port, (err) => {
   if (err) {
     console.log(err);
