@@ -5,7 +5,7 @@ const cron = require('node-cron');
 const smtpTransporter = nodemailer.createTransport({
   service: 'Gmail',
   auth: {
-    user: 'hackathon2medicationreminder@gmail.com', // change to Productized email and password
+    user: 'notifications@productized.co', // change to Productized email and password
     pass: process.env.NODEMAILER_PASS, // change to Productized email and password
   },
 });
@@ -13,7 +13,7 @@ const smtpTransporter = nodemailer.createTransport({
 const sendNodemailer = (formData) => {
   console.log('formData formData formData', formData);
   const mailOptions = {
-    from: 'Productized <hackathon2medicationreminder@gmail.com>', // change to 'Productized <productized email>'
+    from: 'Productized <notifications@productized.co>', // change to 'Productized <productized email>'
     to: `${
       formData.emailsList ? formData.emailsList : 'andremdpereira@gmail.com'
     }`, // change to email(s) from email list
