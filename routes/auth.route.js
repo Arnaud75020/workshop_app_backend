@@ -93,10 +93,11 @@ router.post('/login', function (req, res) {
     const token = jwt.sign({ user }, process.env.JWT_SECRET);
     res.cookie('token', token, {
       expires: new Date(Date.now() + 44600000),
-      secure: false, // set to true if your using https
+      secure: true,
       httpOnly: true,
       sameSite: 'strict',
     });
+    console.log('TOKEN', token);
     return res.json({ user, token });
   })(req, res);
 });

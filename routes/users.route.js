@@ -1,10 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const connection = require('../config');
+const bcrypt = require('bcrypt');
 
 //GET ALL USERS http://localhost:5000/users
 
 router.get('/', (req, res) => {
+  console.log('users');
   connection.query(
     'SELECT u.*, r.role, COUNT(u_w.user_id) AS workshop_count FROM user u JOIN role r ON u.role_id=r.id LEFT JOIN user_workshops u_w ON u.id=u_w.user_id GROUP BY u.id',
     (err, results) => {
@@ -97,10 +99,36 @@ router.delete('/:id', (req, res) => {
   });
 });
 
+router.put('/change-password', (req, res) => {
+  const formData = req.body;
+
+  const { email, newPassword } = formData;
+  console.log(formData);
+
+  bcrypt.hash(newPassword, 10, (err, hash) => {
+    return connection.query(
+      'UPDATE user SET password = ? WHERE email = ?',
+      [hash, email],
+      (err, results) => {
+        if (err) {
+          console.log('ERR', err);
+          return res.status(500).json({
+            error: err.message,
+            sql: err.sql,
+          });
+        }
+        res.status(200).send(results);
+        console.log('RESULTS', results);
+      }
+    );
+  });
+});
+
 router.put('/:id', (req, res) => {
   const formData = req.body;
   const idUpdatedUser = req.params.id;
   console.log(formData, idUpdatedUser);
+
   return connection.query(
     'UPDATE user SET ? WHERE id = ?',
     [formData, idUpdatedUser],

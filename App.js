@@ -3,11 +3,10 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-const port = process.env.PORT;
+const cors = require('cors');
+const port = process.env.PORT || 5000;
 
 const morgan = require('morgan');
-
-const cors = require('cors');
 
 const cookieParser = require('cookie-parser');
 
@@ -39,13 +38,20 @@ process.on('SIGINT', function () {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(cors());
+app.use(
+  cors({
+    credentials: true,
+    origin: process.env.CLIENT_PUBLIC_URL || 'http://localhost:3000',
+  })
+);
 app.use(morgan('dev'));
 
 app.use('/notifications', notificationRouter);
 app.use('/users', userRouter);
 app.use('/workshops', workshopRouter);
 app.use('/auth', authRouter);
+
+console.log('NODE_ENV', process.env.NODE_ENV);
 
 app.listen(port, (err) => {
   if (err) {

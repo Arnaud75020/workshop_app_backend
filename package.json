@@ -5,7 +5,7 @@
   "main": "App.js",
   "scripts": {
     "start:dev": "nodemon App.js",
-    "start": "pm2 start App.js && pm2 log 0"
+    "start": "node App.js"
   },
   "author": "",
   "license": "ISC",
@@ -15,7 +15,6 @@
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
-    "cors": "^2.8.5",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
     "morgan": "^1.10.0",
