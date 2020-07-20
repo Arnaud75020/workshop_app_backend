@@ -24,9 +24,11 @@ router.get('/', (req, res) => {
 
 router.get('/months', (req, res) => {
   connection.query(
-    'SELECT DISTINCT MONTHNAME(date) AS month FROM workshops ORDER BY month DESC',
+    'SELECT DISTINCT MONTHNAME(date) AS month FROM workshops ORDER BY Month(month)',
     (err, results) => {
+      console.log(err)
       if (err) {
+        console.log
         res.status(500).json({
           error: err.message,
           sql: err.sql,
