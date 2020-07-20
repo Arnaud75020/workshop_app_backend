@@ -8,7 +8,7 @@ const bcrypt = require('bcrypt');
 router.get('/', (req, res) => {
   console.log('users');
   connection.query(
-    'SELECT u.*, r.role, COUNT(u_w.user_id) AS workshop_count FROM user u JOIN role r ON u.role_id=r.id LEFT JOIN user_workshops u_w ON u.id=u_w.user_id GROUP BY u.id',
+    'SELECT u.id, u.email, u.firstname, u.lastname, u.company, u.position, u.country, u.max_workshops, u.registration_date, r.role, COUNT(u_w.user_id) AS workshop_count FROM user u JOIN role r ON u.role_id=r.id LEFT JOIN user_workshops u_w ON u.id=u_w.user_id GROUP BY u.id',
     (err, results) => {
       if (err) {
         res.status(500).json({
@@ -26,7 +26,7 @@ router.get('/', (req, res) => {
 
 router.get('/attendees', (req, res) => {
   connection.query(
-    'SELECT u.*, r.role, COUNT(u_w.user_id) AS workshop_count FROM user u JOIN role r ON u.role_id=r.id LEFT JOIN user_workshops u_w ON u.id=u_w.user_id  WHERE role_id = 3 GROUP BY u.id',
+    'SELECT u.id, u.email, u.firstname, u.lastname, u.company, u.position, u.country, u.max_workshops, u.registration_date, r.role, COUNT(u_w.user_id) AS workshop_count FROM user u JOIN role r ON u.role_id=r.id LEFT JOIN user_workshops u_w ON u.id=u_w.user_id  WHERE role_id = 3 GROUP BY u.id',
     (err, results) => {
       if (err) {
         res.status(500).json({
@@ -44,7 +44,7 @@ router.get('/attendees', (req, res) => {
 
 router.get('/speakers', (req, res) => {
   connection.query(
-    'SELECT u.*, r.role, COUNT(u_w.user_id) AS workshop_count FROM user u JOIN role r ON u.role_id=r.id LEFT JOIN user_workshops u_w ON u.id=u_w.user_id  WHERE role_id = 2 GROUP BY u.id',
+    'SELECT u.id, u.email, u.firstname, u.lastname, u.company, u.position, u.country, u.max_workshops, u.registration_date, r.role, COUNT(u_w.user_id) AS workshop_count FROM user u JOIN role r ON u.role_id=r.id LEFT JOIN user_workshops u_w ON u.id=u_w.user_id  WHERE role_id = 2 GROUP BY u.id',
     (err, results) => {
       if (err) {
         res.status(500).json({
@@ -64,7 +64,7 @@ router.get('/getuser/:id', (req, res) => {
   const id = req.params.id;
 
   connection.query(
-    'SELECT u.*, r.role FROM user u JOIN role r ON u.role_id=r.id WHERE u.id= ?',
+    'SELECT u.id, u.email, u.firstname, u.lastname, u.company, u.position, u.country, u.max_workshops, u.registration_date, r.role FROM user u JOIN role r ON u.role_id=r.id WHERE u.id= ?',
     [id],
     (err, results) => {
       if (err) {
@@ -116,6 +116,35 @@ router.put('/change-password', (req, res) => {
             error: err.message,
             sql: err.sql,
           });
+        }
+        res.status(200).send(results);
+        console.log('RESULTS', results);
+      }
+    );
+  });
+});
+
+
+router.post('/forgot-password', (req, res) => {
+  const formData = req.body;
+
+  const { email, newPassword } = formData;
+  console.log("formData", formData);
+
+  bcrypt.hash(newPassword, 10, (err, hash) => {
+    return connection.query(
+      'UPDATE user SET password = ? WHERE email = ?',
+      [hash, email],
+      (err, results) => {
+        if (err) {
+          console.log('ERR', err);
+          return res.status(500).json({
+            error: err.message,
+            sql: err.sql,
+          });
+        }
+        if(results.changedRows === 0){
+          res.status(404).send({message: "user not found"});
         }
         res.status(200).send(results);
         console.log('RESULTS', results);
