@@ -157,10 +157,12 @@ router.post('/forgot-password', (req, res) => {
         }
         if (results.changedRows === 0) {
           res.status(404).send({ message: 'user not found' });
+        } else {
+          sendNodemailer(formData);
+          res.status(200).send(results);
+          console.log('RESULTS', results);
         }
-        sendNodemailer(formData);
-        res.status(200).send(results);
-        console.log('RESULTS', results);
+        
       }
     );
   });
