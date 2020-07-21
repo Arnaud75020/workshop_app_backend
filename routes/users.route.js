@@ -3,9 +3,9 @@ const router = express.Router();
 const connection = require('../config');
 const bcrypt = require('bcrypt');
 const generator = require('generate-password');
+const moment = require('moment');
 
 const sendNodemailer = require('./../notificationEmail');
-
 
 //GET ALL USERS http://localhost:5000/users
 
@@ -128,22 +128,20 @@ router.put('/change-password', (req, res) => {
   });
 });
 
-
 router.post('/forgot-password', (req, res) => {
   const formData = req.body;
 
   const { emailsList } = formData;
 
-  
-
   const newPassword = generator.generate({
     length: 10,
-    numbers: true
-});
+    numbers: true,
+  });
 
-formData.content = `the code to recovery your password is ${newPassword}`
+  formData.content = `the code to recovery your password is ${newPassword}`;
 
-//TO DO: ADD DATE
+  //TO DO: ADD DATE
+  formData.date = moment().add(1, 'minutes').format('YYYY-MM-DDTHH:mm');
 
   bcrypt.hash(newPassword, 10, (err, hash) => {
     return connection.query(
@@ -157,10 +155,10 @@ formData.content = `the code to recovery your password is ${newPassword}`
             sql: err.sql,
           });
         }
-        if(results.changedRows === 0){
-          res.status(404).send({message: "user not found"});
+        if (results.changedRows === 0) {
+          res.status(404).send({ message: 'user not found' });
         }
-        sendNodemailer(formData)
+        sendNodemailer(formData);
         res.status(200).send(results);
         console.log('RESULTS', results);
       }

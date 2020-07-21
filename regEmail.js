@@ -4,14 +4,14 @@ const nodemailer = require('nodemailer');
 const smtpTransporter = nodemailer.createTransport({
   service: 'Gmail',
   auth: {
-    user: 'hackathon2medicationreminder@gmail.com',
+    user: 'notifications.productized@gmail.com',
     pass: process.env.NODEMAILER_PASS,
   },
 });
 
 const sendNodemailer = () => {
   const mailOptions = {
-    from: `Productized <hackathon2medicationreminder@gmail.com>`,
+    from: `Productized <notifications.productized@gmail.com>`,
     to: 'andremdpereira@gmail.com',
     subject: `Workshop registration`,
     text: `You are now registered.`,
