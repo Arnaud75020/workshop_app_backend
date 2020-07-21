@@ -91,9 +91,9 @@ router.post('/login', function (req, res) {
     if (err) return res.status(500).send(err);
     if (!user) return res.status(400).json({ message: info.message });
     const token = jwt.sign({ user }, process.env.JWT_SECRET);
-    res.cookie('token', token, {
+    res.cookie('_p_c', token, {
       expires: new Date(Date.now() + 44600000),
-      secure: true,
+      // secure: true,
       httpOnly: true,
       sameSite: 'strict',
     });
@@ -105,7 +105,7 @@ router.post('/login', function (req, res) {
 router.post(
   '/logout',
   (req, res, next) => {
-    res.clearCookie('token');
+    res.clearCookie('_p_c');
     next();
   },
   (req, res) => {
