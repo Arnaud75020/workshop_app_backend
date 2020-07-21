@@ -24,9 +24,11 @@ router.get('/', (req, res) => {
 
 router.get('/months', (req, res) => {
   connection.query(
-    'SELECT DISTINCT MONTHNAME(date) AS month FROM workshops ORDER BY month DESC',
+    'SELECT DISTINCT MONTHNAME(date) AS month FROM workshops ORDER BY Month(month)',
     (err, results) => {
+      console.log(err)
       if (err) {
+        console.log
         res.status(500).json({
           error: err.message,
           sql: err.sql,
@@ -199,7 +201,10 @@ router.post('/user-workshops/add', (req, res) => {
   const formData = req.body;
   const { user_id } = formData;
 
-  return connection.query(
+  console.log("ADD")
+
+
+  connection.query(
     'INSERT INTO user_workshops SET ?',
     [formData],
     (err, results) => {
@@ -210,22 +215,35 @@ router.post('/user-workshops/add', (req, res) => {
         });
       }
       return connection.query(
-        'SELECT * FROM user_workshops WHERE user_id = ?',
-        [user_id],
-        (err2, records) => {
-          if (err2) {
-            console.log(err2);
+        'Update user SET max_workshops = max_workshops - 1 WHERE id = ?', [user_id], (err3, results3) => {
+          if (err3) {
+            console.log('ERR', err3);
             return res.status(500).json({
-              error: err2.message,
-              sql: err2.sql,
+              error: err3.message,
+              sql: err3.sql,
             });
           }
-          const UserWorkshops = records;
-          return res.status(201).json(UserWorkshops);
+          return connection.query(
+            'SELECT * FROM user_workshops WHERE user_id = ?',
+            [user_id],
+            (err2, records) => {
+              if (err2) {
+                console.log(err2);
+                return res.status(500).json({
+                  error: err2.message,
+                  sql: err2.sql,
+                });
+              }
+              const UserWorkshops = records;
+              return res.status(201).json(UserWorkshops);
+            }
+          )
         }
-      );
+      )
+      
     }
-  );
+  )
+  
 });
 
 //ATTENDEE LEAVING A WORKSHOP http://localhost:5000/workshops/user-workshops/delete
@@ -234,6 +252,8 @@ router.delete('/user-workshops/delete', (req, res) => {
   const formData = req.body;
   const workshop_id = formData[0];
   const user_id = formData[1];
+
+  console.log("REMOVE")
 
   connection.query(
     'DELETE FROM user_workshops WHERE workshop_id = ? AND user_id = ?',
@@ -250,21 +270,33 @@ router.delete('/user-workshops/delete', (req, res) => {
         return res.status(404).json({ msg: 'user does not exist' });
       }
       return connection.query(
-        'SELECT * FROM user_workshops WHERE user_id = ?',
-        [user_id],
-        (err2, records) => {
-          if (err2) {
+        'Update user SET max_workshops = max_workshops + 1 WHERE id = ?', [user_id], (err3, results3) => {
+          if (err3) {
+            console.log('ERR', err3);
             return res.status(500).json({
-              error: err2.message,
-              sql: err2.sql,
+              error: err3.message,
+              sql: err3.sql,
             });
           }
-          const UserWorkshops = records;
-          return res.status(201).json(UserWorkshops);
+          return connection.query(
+            'SELECT * FROM user_workshops WHERE user_id = ?',
+            [user_id],
+            (err2, records) => {
+              if (err2) {
+                return res.status(500).json({
+                  error: err2.message,
+                  sql: err2.sql,
+                });
+              }
+              const UserWorkshops = records;
+              return res.status(201).json(UserWorkshops);
+            }
+          )
         }
-      );
+      )
+      
     }
-  );
+  )
 });
 
 //DELETING ALL THE ENROLLES OF AN ATTENDEE http://localhost:5000/workshops/all-user-workshops/:id
@@ -339,6 +371,31 @@ router.put('/workshop-user-workshops/:id', (req, res) => {
   return connection.query(
     'UPDATE user_workshops SET speaker_id = ?, workshop_id = ? WHERE workshop_id = ?',
     [speaker_id, workshopId, workshopId],
+    (err, results) => {
+      if (err) {
+        console.log('ERR', err);
+        return res.status(500).json({
+          error: err.message,
+          sql: err.sql,
+        });
+      }
+      res.status(200).send(results);
+      console.log('RESULTS', results);
+    }
+  );
+});
+
+router.put('/workshop-status/:id', (req, res) => {
+
+  const { status } = req.body
+
+  const id = req.params.id
+
+  console.log(status)
+
+  return connection.query(
+    'UPDATE workshops SET status_open = ? WHERE id = ?',
+    [status, id],
     (err, results) => {
       if (err) {
         console.log('ERR', err);
