@@ -190,4 +190,23 @@ router.put('/:id', (req, res) => {
   );
 });
 
+router.get('/get-max-workshops/:id', (req, res) => {
+  const id = req.params.id;
+
+  connection.query(
+    'SELECT max_workshops FROM user WHERE id = ?',
+    [id],
+    (err, results) => {
+      if (err) {
+        res.status(500).json({
+          error: err.message,
+          sql: err.sql,
+        });
+      } else {
+        res.json(results);
+      }
+    }
+  );
+});
+
 module.exports = router;
