@@ -360,30 +360,8 @@ router.delete('/all-speaker-workshops/:id', (req, res) => {
   );
 });
 
-router.put('/workshop-user-workshops/:id', (req, res) => {
-  const formData = req.body;
+//UPDATE WORKSHOP STATUS WHEN CAPACITY FULL http://localhost:5000/workshops/workshop-status/:id
 
-  const { speaker_id } = formData;
-  const workshopId = req.params.id;
-
-  console.log('formData', formData, 'workshopId', workshopId);
-
-  return connection.query(
-    'UPDATE user_workshops SET speaker_id = ?, workshop_id = ? WHERE workshop_id = ?',
-    [speaker_id, workshopId, workshopId],
-    (err, results) => {
-      if (err) {
-        console.log('ERR', err);
-        return res.status(500).json({
-          error: err.message,
-          sql: err.sql,
-        });
-      }
-      res.status(200).send(results);
-      console.log('RESULTS', results);
-    }
-  );
-});
 
 router.put('/workshop-status/:id', (req, res) => {
 
@@ -391,21 +369,17 @@ router.put('/workshop-status/:id', (req, res) => {
 
   const id = req.params.id
 
-  console.log(status)
-
   return connection.query(
     'UPDATE workshops SET status_open = ? WHERE id = ?',
     [status, id],
     (err, results) => {
       if (err) {
-        console.log('ERR', err);
         return res.status(500).json({
           error: err.message,
           sql: err.sql,
         });
       }
       res.status(200).send(results);
-      console.log('RESULTS', results);
     }
   );
 });

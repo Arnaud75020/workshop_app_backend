@@ -10,7 +10,7 @@ const sendNodemailer = require('./../notificationEmail');
 //GET ALL USERS http://localhost:5000/users
 
 router.get('/', (req, res) => {
-  console.log('users');
+
   connection.query(
     'SELECT u.id, u.email, u.firstname, u.lastname, u.company, u.position, u.country, u.max_workshops, u.registration_date, r.role, COUNT(u_w.user_id) AS workshop_count FROM user u JOIN role r ON u.role_id=r.id LEFT JOIN user_workshops u_w ON u.id=u_w.user_id GROUP BY u.id',
     (err, results) => {
@@ -29,6 +29,7 @@ router.get('/', (req, res) => {
 //GET ALL ATTENDEES http://localhost:5000/users/attendees
 
 router.get('/attendees', (req, res) => {
+
   connection.query(
     'SELECT u.id, u.email, u.firstname, u.lastname, u.company, u.position, u.country, u.max_workshops, u.registration_date, r.role, COUNT(u_w.user_id) AS workshop_count FROM user u JOIN role r ON u.role_id=r.id LEFT JOIN user_workshops u_w ON u.id=u_w.user_id  WHERE role_id = 3 GROUP BY u.id',
     (err, results) => {
@@ -47,6 +48,7 @@ router.get('/attendees', (req, res) => {
 //GET ALL SPEAKERS http://localhost:5000/users/speakers
 
 router.get('/speakers', (req, res) => {
+
   connection.query(
     'SELECT u.id, u.email, u.firstname, u.lastname, u.company, u.position, u.country, u.max_workshops, u.registration_date, r.role, COUNT(u_w.user_id) AS workshop_count FROM user u JOIN role r ON u.role_id=r.id LEFT JOIN user_workshops u_w ON u.id=u_w.user_id  WHERE role_id = 2 GROUP BY u.id',
     (err, results) => {
@@ -65,6 +67,7 @@ router.get('/speakers', (req, res) => {
 //GET ONE USER http://localhost:5000/:id
 
 router.get('/getuser/:id', (req, res) => {
+
   const id = req.params.id;
 
   connection.query(
@@ -86,6 +89,7 @@ router.get('/getuser/:id', (req, res) => {
 //DELETE ONE USER http://localhost:5000/users/:id
 
 router.delete('/:id', (req, res) => {
+
   const id = req.params.id;
 
   connection.query('DELETE FROM user WHERE id = ?', [id], (err, results) => {
@@ -103,11 +107,13 @@ router.delete('/:id', (req, res) => {
   });
 });
 
+//CHANGE PASSWORD http://localhost:5000/users/change-password
+
 router.put('/change-password', (req, res) => {
+
   const formData = req.body;
 
   const { email, newPassword } = formData;
-  console.log(formData);
 
   bcrypt.hash(newPassword, 10, (err, hash) => {
     return connection.query(
@@ -115,20 +121,21 @@ router.put('/change-password', (req, res) => {
       [hash, email],
       (err, results) => {
         if (err) {
-          console.log('ERR', err);
           return res.status(500).json({
             error: err.message,
             sql: err.sql,
           });
         }
         res.status(200).send(results);
-        console.log('RESULTS', results);
       }
     );
   });
 });
 
+//FORGOT PASSWORD http://localhost:5000/users/forgot-password
+
 router.post('/forgot-password', (req, res) => {
+
   const formData = req.body;
 
   const { emailsList } = formData;
@@ -140,7 +147,6 @@ router.post('/forgot-password', (req, res) => {
 
   formData.content = `the code to recovery your password is ${newPassword}`;
 
-  //TO DO: ADD DATE
   formData.date = moment().add(1, 'minutes').format('YYYY-MM-DDTHH:mm');
 
   bcrypt.hash(newPassword, 10, (err, hash) => {
@@ -149,7 +155,6 @@ router.post('/forgot-password', (req, res) => {
       [hash, emailsList],
       (err, results) => {
         if (err) {
-          console.log('ERR', err);
           return res.status(500).json({
             error: err.message,
             sql: err.sql,
@@ -160,7 +165,6 @@ router.post('/forgot-password', (req, res) => {
         } else {
           sendNodemailer(formData);
           res.status(200).send(results);
-          console.log('RESULTS', results);
         }
         
       }
@@ -168,29 +172,33 @@ router.post('/forgot-password', (req, res) => {
   });
 });
 
+//UPDATE USER INFO http://localhost:5000/users/:id
+
 router.put('/:id', (req, res) => {
+
   const formData = req.body;
+
   const idUpdatedUser = req.params.id;
-  console.log(formData, idUpdatedUser);
 
   return connection.query(
     'UPDATE user SET ? WHERE id = ?',
     [formData, idUpdatedUser],
     (err, results) => {
       if (err) {
-        console.log('ERR', err);
         return res.status(500).json({
           error: err.message,
           sql: err.sql,
         });
       }
       res.status(200).send(results);
-      console.log('RESULTS', results);
     }
   );
 });
 
+//GET NUMBER OF WORKSHOPS LEFT FOR A SPECIFIC USER BY ID http://localhost:5000/users/get-max-workshops/:id'
+
 router.get('/get-max-workshops/:id', (req, res) => {
+  
   const id = req.params.id;
 
   connection.query(

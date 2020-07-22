@@ -4,7 +4,6 @@ const jwt = require('jsonwebtoken');
 
 const verifyToken = async (req, res, next) => {
   const token = req.cookies._p_c;
-  console.log('TOKEN', token);
   try {
     if (!token) {
       return res.status(401).json('You need to Login');
