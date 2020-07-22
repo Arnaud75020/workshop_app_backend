@@ -5,8 +5,6 @@ const connection = require('../config');
 const bcrypt = require('bcrypt');
 
 const jwt = require('jsonwebtoken');
-const JWTStrategy = require('passport-jwt').Strategy;
-const ExtractJWT = require('passport-jwt').ExtractJwt;
 
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
@@ -97,10 +95,11 @@ router.post('/login', function (req, res) {
       httpOnly: true,
       sameSite: 'strict',
     });
-    console.log('TOKEN', token);
     return res.json({ user, token });
   })(req, res);
 });
+
+// LOGOUT ROUTE http://localhost:5000/auth/logout
 
 router.post(
   '/logout',
@@ -123,8 +122,9 @@ router.post('/change-password', function (req, res) {
   })(req, res);
 });
 
+// CHANGE PASSWORD ROUTE http://localhost:5000/auth/verify-token
+
 router.get('/verify-token', verifyToken, (req, res) => {
-  console.log('REQ USER', req.user);
   res.status(200).send(req.user);
 });
 

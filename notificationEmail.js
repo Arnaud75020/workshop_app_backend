@@ -6,13 +6,12 @@ const moment = require('moment');
 const smtpTransporter = nodemailer.createTransport({
   service: 'Gmail',
   auth: {
-    user: 'notifications.productized@gmail.com', // CREATE THIS EMAIL
+    user: 'notifications.productized@gmail.com', 
     pass: process.env.NODEMAILER_PASS,
   },
 });
 
 const sendNodemailer = (formData) => {
-  console.log('formData formData formData', formData);
   const mailOptions = {
     from: 'Productized <notifications.productized@gmail.com>',
     to: `${formData.emailsList}`,
@@ -21,9 +20,6 @@ const sendNodemailer = (formData) => {
   };
 
   const dateArray = formData.date.split(/[-T:]/).map(Number);
-
-  console.log(dateArray);
-  console.log('MOMENT +1', moment().add(1, 'minutes'));
 
   cron.schedule(
     `${dateArray[4]} ${dateArray[3]} ${dateArray[2]} ${dateArray[1]} *`,

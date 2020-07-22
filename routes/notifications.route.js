@@ -22,9 +22,8 @@ router.get('/', (req, res) => {
 //ADD NEW NOTIFICATIONS http://localhost:5000/notifications
 
 router.post('/', (req, res) => {
+  
   const formData = req.body;
-
-  console.log(formData);
 
   let sql =
     'INSERT INTO notification (subject, content, state, send_to, date) VALUES ';
@@ -37,7 +36,6 @@ router.post('/', (req, res) => {
   });
   return connection.query(sql, (err2, records) => {
     if (err2) {
-      console.log(err2);
       return res.status(500).json({
         error: err2.message,
         sql: err2.sql,
@@ -54,6 +52,7 @@ router.post('/', (req, res) => {
 //DELETE ONE NOTIFICATION http://localhost:5000/notifications/:id
 
 router.delete('/:id', (req, res) => {
+  
   const id = req.params.id;
 
   connection.query(
